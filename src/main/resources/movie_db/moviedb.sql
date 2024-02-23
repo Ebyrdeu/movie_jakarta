@@ -1,7 +1,7 @@
 CREATE TABLE movie (
                        movieID INT AUTO_INCREMENT PRIMARY KEY,
                        title VARCHAR(100) UNIQUE NOT NULL,
-                       release DATE,
+                       releaseDate DATE,
                        genreID INT NOT NULL,
                        directorID INT NOT NULL,
                        actorID INT NOT NULL,
