@@ -1,12 +1,17 @@
 package dev.ebyrdeu.movie_jakarta.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.Objects;
 import java.util.UUID;
 
-
-/*
-    This class is used temporarily until real entity class is merged to master.
- */
+@Entity
 public class Movie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String title;
     private int releaseYear;
@@ -42,5 +47,18 @@ public class Movie {
 
     public void setDirector(String director) {
         this.director = director;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return getId() != null && Objects.equals(getId(), movie.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return getClass().hashCode();
     }
 }
