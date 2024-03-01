@@ -1,8 +1,10 @@
 package dev.ebyrdeu.movie_jakarta.dto;
 
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 
-public record MovieDto(String title, int releaseYear, String director) {
+public record MovieDto(@NotEmpty String title, @Positive int releaseYear, @NotEmpty String director) {
 
     public static MovieDto map(Movie movie){
         return new MovieDto(movie.getTitle(), movie.getReleaseYear(), movie.getDirector());
