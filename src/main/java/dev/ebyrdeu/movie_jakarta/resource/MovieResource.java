@@ -12,16 +12,17 @@ import java.net.URI;
 @Path("/movies")
 public class MovieResource {
     @GET
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response all() {
         return Response.ok().build();
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response update(MovieDto movieDto){
         Movie movie = MovieDto.map(movieDto);
-        // movieRepository.update(movie)
+        movie.setTitle("New thing");
         return Response.ok(movie).build();
     }
 
