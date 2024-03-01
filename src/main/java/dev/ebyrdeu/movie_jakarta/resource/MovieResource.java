@@ -5,7 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 
 @Path("/hello-world")
-public class HelloResource {
+public class MovieResource {
     @GET
     @Produces("text/plain")
     public String hello() {
