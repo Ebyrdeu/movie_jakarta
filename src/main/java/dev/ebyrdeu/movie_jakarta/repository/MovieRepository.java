@@ -1,54 +1,44 @@
 package dev.ebyrdeu.movie_jakarta.repository;
 
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ApplicationScoped
 public class MovieRepository {
-    private EntityManager entityManager;
+    @PersistenceContext(unitName = "mysql")
+    private EntityManager em;
 
-    public MovieRepository(EntityManager entityManager){
-        this.entityManager = entityManager;
-    }
-
+    @Transactional
     public Movie saveMovie(Movie movie) {
-        try {
-            entityManager.getTransaction().begin();
-            if (movie.getId() == null) {
-                entityManager.persist(movie);
-            }else{
-                movie = entityManager.merge(movie);
-            }
-            entityManager.getTransaction().commit();
-            return movie;
-        }catch (RuntimeException e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        }
+        em.persist(movie);
+        return movie;
     }
 
     public Optional<Movie> findById(UUID id) {
-        Movie movie = entityManager.find(Movie.class, id);
-        return movie != null ? Optional.of(movie) : Optional.empty();
+        Movie movie = em.find(Movie.class, id);
+        return Optional.ofNullable(movie);
     }
 
     public List<Movie> findAll() {
-        TypedQuery<Movie> query = entityManager.createQuery("SELECT m FROM Movie m", Movie.class);
-        return query.getResultList();
+        return em.createQuery("SELECT m FROM Movie m", Movie.class).getResultList();
     }
 
-    public void deleteMovie(Movie movie){
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.remove(movie);
-            entityManager.getTransaction().commit();
-        }catch (RuntimeException e){
-            entityManager.getTransaction().rollback();
-            throw e;
+    @Transactional
+    public void deleteMovie(Movie movie) {
+        var existingMovie = em.find(Movie.class, movie.getId());
+
+        if (existingMovie == null) {
+            throw new NotFoundException("Movie with id: " + movie.getId() + " not found");
         }
+
+        em.remove(existingMovie);
     }
 }
