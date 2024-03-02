@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Path("/movies")
 public class MovieResource {
@@ -18,40 +19,37 @@ public class MovieResource {
     private MovieRepository movieRepository;
 
     public MovieResource(){
-
     }
 
     @Inject
     public MovieResource(MovieRepository movieRepository){
-        this.movieRepository = new MovieRepository();
+        this.movieRepository = movieRepository;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response all() {
-        return Response.ok().build();
+    public Movies all() {
+        return new Movies(movieRepository.findAll().stream().map(MovieDto::map).collect(Collectors.toList()));
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(UUID uuid, MovieDto changesToBeMade){
-
-        return Response.ok().build();
+    public Response update(UUID uuid,MovieDto movieDetails){
+        Movie movie = movieRepository.updateMovie(uuid, MovieDto.map(movieDetails));
+        return Response.ok(movie).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response add(MovieDto movieDto){
-        //MovieRepository.add()
-        return Response.created(URI.create("http://localhost:8080")).build();
+        Movie movie = movieRepository.saveMovie(MovieDto.map(movieDto));
+        return Response.created(URI.create("http://localhost:8080/app/api/movies" + movie.getId())).build();
     }
 
     @DELETE
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response delete(MovieDto movieDto){
-        Movie movie = MovieDto.map(movieDto);
-        //movieRepository.delete();
+    @Path("/{id}")
+    public Response delete(@PathParam("id") UUID id){
         return Response.noContent().build();
     }
 
