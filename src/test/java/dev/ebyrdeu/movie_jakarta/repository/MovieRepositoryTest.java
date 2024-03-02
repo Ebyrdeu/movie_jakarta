@@ -84,7 +84,7 @@ class MovieRepositoryTest {
 
         when(entityManager.find(Movie.class, movieId)).thenReturn(existingMovie);
 
-        movieRepository.deleteMovie(existingMovie);
+        movieRepository.deleteMovie(movieId);
 
         verify(entityManager).remove(existingMovie);
     }
@@ -97,7 +97,7 @@ class MovieRepositoryTest {
 
         when(entityManager.find(Movie.class, movieId)).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> movieRepository.deleteMovie(nonExistingMovie));
+        assertThrows(RuntimeException.class, () -> movieRepository.deleteMovie(movieId));
     }
     @Test
     void updateExistingMovieSuccessfully() {
