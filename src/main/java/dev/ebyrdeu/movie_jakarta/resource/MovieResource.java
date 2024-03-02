@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,19 @@ public class MovieResource {
         return new Movies(movieRepository.findAll().stream().map(MovieDto::map).collect(Collectors.toList()));
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response one(@PathParam("id") UUID id){
+        Optional<Movie> optionalMovie = movieRepository.findById(id);
+        if (optionalMovie.isPresent()) {
+            MovieDto movieDto = MovieDto.map(optionalMovie.get());
+            return Response.ok(movieDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response add(MovieDto movieDto){
@@ -40,18 +54,18 @@ public class MovieResource {
     }
 
     @PUT
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(UUID uuid,MovieDto movieDetails){
-        Movie movie = movieRepository.updateMovie(uuid, MovieDto.map(movieDetails));
+    public Response update(@PathParam("id")UUID id,MovieDto movieDetails){
+        Movie movie = movieRepository.updateMovie(id, MovieDto.map(movieDetails));
         return Response.ok(movie).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id){
-
+        movieRepository.deleteMovie(id);
         return Response.noContent().build();
     }
-
 }
