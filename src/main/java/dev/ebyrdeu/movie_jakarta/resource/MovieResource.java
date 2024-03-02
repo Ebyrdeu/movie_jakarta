@@ -32,6 +32,13 @@ public class MovieResource {
         return new Movies(movieRepository.findAll().stream().map(MovieDto::map).collect(Collectors.toList()));
     }
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response add(MovieDto movieDto){
+        Movie movie = movieRepository.saveMovie(MovieDto.map(movieDto));
+        return Response.created(URI.create("http://localhost:8080/app/api/movies" + movie.getId())).build();
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -40,16 +47,10 @@ public class MovieResource {
         return Response.ok(movie).build();
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response add(MovieDto movieDto){
-        Movie movie = movieRepository.saveMovie(MovieDto.map(movieDto));
-        return Response.created(URI.create("http://localhost:8080/app/api/movies" + movie.getId())).build();
-    }
-
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id){
+
         return Response.noContent().build();
     }
 
