@@ -3,14 +3,29 @@ package dev.ebyrdeu.movie_jakarta.resource;
 import dev.ebyrdeu.movie_jakarta.dto.MovieDto;
 import dev.ebyrdeu.movie_jakarta.dto.Movies;
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
+import dev.ebyrdeu.movie_jakarta.repository.MovieRepository;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
+import java.util.UUID;
 
 @Path("/movies")
 public class MovieResource {
+
+    private MovieRepository movieRepository;
+
+    public MovieResource(){
+
+    }
+
+    @Inject
+    public MovieResource(MovieRepository movieRepository){
+        this.movieRepository = new MovieRepository();
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response all() {
@@ -20,10 +35,9 @@ public class MovieResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(MovieDto movieDto){
-        Movie movie = MovieDto.map(movieDto);
-        movie.setTitle("New thing");
-        return Response.ok(movie).build();
+    public Response update(UUID uuid, MovieDto changesToBeMade){
+
+        return Response.ok().build();
     }
 
     @POST
