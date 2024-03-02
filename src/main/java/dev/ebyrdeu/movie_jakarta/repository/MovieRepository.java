@@ -41,4 +41,16 @@ public class MovieRepository {
 
         em.remove(existingMovie);
     }
+    @Transactional
+    public Movie updateMovie(UUID id, Movie movieDetails) {
+        Movie movieToUpdate = em.find(Movie.class, id);
+        if (movieToUpdate == null) {
+            throw new NotFoundException("Movie with id: " + id + " not found");
+        }
+        movieToUpdate.setTitle(movieDetails.getTitle());
+        movieToUpdate.setReleaseYear(movieDetails.getReleaseYear());
+        movieToUpdate.setDirector(movieDetails.getDirector());
+
+        return em.merge(movieToUpdate);
+    }
 }
