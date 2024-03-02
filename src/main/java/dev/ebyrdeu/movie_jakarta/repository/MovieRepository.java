@@ -14,7 +14,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class MovieRepository {
     @PersistenceContext(unitName = "mysql")
-    private EntityManager em;
+    EntityManager em;
 
     @Transactional
     public Movie saveMovie(Movie movie) {
@@ -32,11 +32,11 @@ public class MovieRepository {
     }
 
     @Transactional
-    public void deleteMovie(Movie movie) {
-        var existingMovie = em.find(Movie.class, movie.getId());
+    public void deleteMovie(UUID id) {
+        var existingMovie = em.find(Movie.class, id);
 
         if (existingMovie == null) {
-            throw new NotFoundException("Movie with id: " + movie.getId() + " not found");
+            throw new NotFoundException("Movie with id: " + id + " not found");
         }
 
         em.remove(existingMovie);
