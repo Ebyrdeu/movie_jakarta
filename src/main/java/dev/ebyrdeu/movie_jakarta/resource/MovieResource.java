@@ -59,8 +59,12 @@ public class MovieResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") @NotNull UUID id, @NotNull MovieDto movieDetails) {
-        Movie movie = movieRepository.updateMovie(id, MovieDto.map(movieDetails));
-        return Response.ok(movie).build();
+        try{
+            movieRepository.updateMovie(id, MovieDto.map(movieDetails));
+        }catch (NotFoundException e){
+            return Response.notModified(new EntityTag("Id: " + id + " does not exists")).build();
+        }
+        return Response.ok().build();
     }
 
     @DELETE
