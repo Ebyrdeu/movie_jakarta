@@ -62,7 +62,7 @@ public class MovieResource {
         try{
             movieRepository.updateMovie(id, MovieDto.map(movieDetails));
         }catch (NotFoundException e){
-            return Response.notModified(new EntityTag("Id: " + id + " does not exists")).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.ok().build();
     }
@@ -73,7 +73,7 @@ public class MovieResource {
         try {
             movieRepository.deleteMovie(id);
         } catch (NotFoundException notFound) {
-            return Response.notModified(new EntityTag("Id: " + id + " does not exists")).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.noContent().build();
     }
