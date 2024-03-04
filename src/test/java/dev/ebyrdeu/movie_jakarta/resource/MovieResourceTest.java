@@ -1,5 +1,6 @@
 package dev.ebyrdeu.movie_jakarta.resource;
 
+import dev.ebyrdeu.movie_jakarta.dto.MovieDto;
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
 import dev.ebyrdeu.movie_jakarta.repository.MovieRepository;
 import jakarta.ws.rs.NotFoundException;
@@ -19,11 +20,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MovieResourceTest {
@@ -53,16 +54,56 @@ class MovieResourceTest {
     @DisplayName("Return status 201 when created")
     void returnStatus201WhenCreated() throws URISyntaxException {
         MockHttpRequest request = MockHttpRequest.post("/movies");
+        when(movieRepository.saveMovie(any())).thenReturn(MovieDto.map(new MovieDto(
+                "Skyfall",
+                2012,
+                "Sam Mendes")));
         request.contentType(MediaType.APPLICATION_JSON);
         request.content(("{\n" +
-                        "  \"title\": \"James Bond\",\n" +
-                        "  \"releaseYear\": 2012,\n" +
-                        "  \"director\": \"John Doe\"\n" +
-                        "}").getBytes());
+                "  \"title\": \"Skyfall\",\n" +
+                "  \"releaseYear\": 2012,\n" +
+                "  \"director\": \"Sam Mendes\"\n" +
+                "}").getBytes());
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
+        assertEquals(201, response.getStatus());
+    }
 
-        assertEquals(202, response.getStatus());
+    @Test
+    @DisplayName("Return status 200 ok when updated")
+    void returnStatus200OkWhenUpdated() throws URISyntaxException {
+        UUID uuid = UUID.randomUUID();
+        MockHttpRequest request = MockHttpRequest.put("/movies/" + uuid);
+        when(movieRepository.updateMovie(any(), any())).thenReturn(MovieDto.map(new MovieDto(
+                "Skyfall",
+                2012,
+                "Sam Mendes")));
+        request.contentType(MediaType.APPLICATION_JSON);
+        request.content(("{\n" +
+                "  \"title\": \"Skyfall\",\n" +
+                "  \"releaseYear\": 2012,\n" +
+                "  \"director\": \"Sam Mendes\"\n" +
+                "}").getBytes());
+        MockHttpResponse response = new MockHttpResponse();
+        dispatcher.invoke(request, response);
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Return 404 when updating entity that does not exist")
+    void return404WhenUpdatingEntityThatDoesNotExist() throws URISyntaxException {
+        UUID uuid = UUID.randomUUID();
+        MockHttpRequest request = MockHttpRequest.put("/movies/" + uuid);
+        when(movieRepository.updateMovie(any(), any())).thenThrow(NotFoundException.class);
+        request.contentType(MediaType.APPLICATION_JSON);
+        request.content(("{\n" +
+                "  \"title\": \"Skyfall\",\n" +
+                "  \"releaseYear\": 2012,\n" +
+                "  \"director\": \"Sam Mendes\"\n" +
+                "}").getBytes());
+        MockHttpResponse response = new MockHttpResponse();
+        dispatcher.invoke(request, response);
+        assertEquals(404, response.getStatus());
     }
 
     @Test
@@ -94,20 +135,26 @@ class MovieResourceTest {
         doThrow(NotFoundException.class).when(movieRepository).deleteMovie(id);
         MockHttpRequest request = MockHttpRequest.delete("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
-        dispatcher.invoke(request,response);
+        dispatcher.invoke(request, response);
         assertEquals(404, response.getStatus());
     }
 
-    
+
     @Test
     @DisplayName("Return status 204 when object is deleted")
     void returnStatus204WhenObjectIsDeleted() throws URISyntaxException {
         UUID id = UUID.randomUUID();
         MockHttpRequest request = MockHttpRequest.delete("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
-        dispatcher.invoke(request,response);
+        dispatcher.invoke(request, response);
         assertEquals(204, response.getStatus());
     }
 
+    @Test
+    @DisplayName("Constructor creates objects of MovieResource class")
+    void constructorCreatesObjectsOfMovieResourceClass(){
+        MovieResource movieResource = new MovieResource();
+        assertEquals(MovieResource.class,movieResource.getClass());
+    }
 
 }
