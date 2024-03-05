@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovieDtoTest {
@@ -19,6 +21,7 @@ class MovieDtoTest {
         movie.setDirector("Christopher Nolan");
 
         movieDto = new MovieDto(
+                UUID.randomUUID(),
                 "Oppenheimer",
                 2023,
                 "Christopher Nolan");
@@ -56,5 +59,6 @@ class MovieDtoTest {
         var movieDto = MovieDto.map(movie);
         assertEquals(movieDto.getClass(), MovieDto.class);
     }
+
 
 }

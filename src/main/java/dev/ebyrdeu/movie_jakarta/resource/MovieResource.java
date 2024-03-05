@@ -5,6 +5,7 @@ import dev.ebyrdeu.movie_jakarta.dto.Movies;
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
 import dev.ebyrdeu.movie_jakarta.repository.MovieRepository;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.EntityTag;
@@ -50,7 +51,7 @@ public class MovieResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response add(@NotNull MovieDto movieDto) {
+    public Response add(@Valid MovieDto movieDto) {
         Movie movie = movieRepository.saveMovie(MovieDto.map(movieDto));
         return Response.created(URI.create("http://localhost:8080/app/api/movies/" + movie.getId())).build();
     }

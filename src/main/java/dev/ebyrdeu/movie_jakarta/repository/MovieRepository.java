@@ -10,11 +10,12 @@ import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @ApplicationScoped
 public class MovieRepository {
     @PersistenceContext(unitName = "mysql")
-    EntityManager em;
+    private EntityManager em;
 
     @Transactional
     public Movie saveMovie(Movie movie) {
@@ -44,13 +45,19 @@ public class MovieRepository {
     @Transactional
     public Movie updateMovie(UUID id, Movie movieDetails) {
         Movie movieToUpdate = em.find(Movie.class, id);
+
         if (movieToUpdate == null) {
             throw new NotFoundException("Movie with id: " + id + " not found");
         }
-        movieToUpdate.setTitle(movieDetails.getTitle());
-        movieToUpdate.setReleaseYear(movieDetails.getReleaseYear());
-        movieToUpdate.setDirector(movieDetails.getDirector());
+
+        checkOnNull(movieToUpdate::setTitle, movieDetails.getTitle());
+        checkOnNull(movieToUpdate::setReleaseYear, movieDetails.getReleaseYear());
+        checkOnNull(movieToUpdate::setDirector, movieToUpdate.getDirector());
 
         return em.merge(movieToUpdate);
+    }
+
+    private <T> void checkOnNull(Consumer<T> consumer, T value) {
+        if (value != null) consumer.accept(value);
     }
 }

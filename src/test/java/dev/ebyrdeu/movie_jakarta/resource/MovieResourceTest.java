@@ -20,10 +20,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +54,7 @@ class MovieResourceTest {
     void returnStatus201WhenCreated() throws URISyntaxException {
         MockHttpRequest request = MockHttpRequest.post("/movies");
         when(movieRepository.saveMovie(any())).thenReturn(MovieDto.map(new MovieDto(
+                UUID.randomUUID(),
                 "Skyfall",
                 2012,
                 "Sam Mendes")));
@@ -75,6 +75,7 @@ class MovieResourceTest {
         UUID uuid = UUID.randomUUID();
         MockHttpRequest request = MockHttpRequest.put("/movies/" + uuid);
         when(movieRepository.updateMovie(any(), any())).thenReturn(MovieDto.map(new MovieDto(
+                UUID.randomUUID(),
                 "Skyfall",
                 2012,
                 "Sam Mendes")));
@@ -152,9 +153,9 @@ class MovieResourceTest {
 
     @Test
     @DisplayName("Constructor creates objects of MovieResource class")
-    void constructorCreatesObjectsOfMovieResourceClass(){
+    void constructorCreatesObjectsOfMovieResourceClass() {
         MovieResource movieResource = new MovieResource();
-        assertEquals(MovieResource.class,movieResource.getClass());
+        assertEquals(MovieResource.class, movieResource.getClass());
     }
 
 }
