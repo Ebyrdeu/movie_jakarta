@@ -59,7 +59,7 @@ public class MovieResource {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") @NotNull UUID id, @NotNull MovieDto movieDetails) {
+    public Response update(@PathParam("id") @NotNull UUID id, @Valid MovieDto movieDetails) {
         try{
             movieRepository.updateMovie(id, MovieDto.map(movieDetails));
         }catch (NotFoundException e){
