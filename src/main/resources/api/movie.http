@@ -1,0 +1,28 @@
+### ALL
+GET http://localhost:8080/app/api/movies
+
+### Single
+GET http://localhost:8080/app/api/movies/2
+
+###
+POST  http://localhost:8080/app/api/movies
+Content-Type: application/json
+
+{
+  "title": "{{$random.alphabetic(3)}}",
+  "releaseYear": 2014,
+  "director": "{{$random.alphabetic(3)}}"
+}
+
+
+###
+PUT http://localhost:8080/app/api/movies/29abdaad-a6c0-4c37-ba42-ae1c8c63f3a1
+Content-Type: application/json
+
+{
+  "releaseYear": 2013
+}
+
+
+###
+DELETE http://localhost:8080/app/api/categories/1
