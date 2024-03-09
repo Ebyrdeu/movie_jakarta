@@ -55,23 +55,13 @@ public class MovieResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") @NotNull UUID id, @Valid MovieDto movieDetails) {
-        try{
-            movieRepository.updateMovie(id, MovieDto.map(movieDetails));
-        }catch (NotFoundException e){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok().build();
+       return movieService.update (id, movieDetails);
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") @NotNull UUID id) {
-        try {
-            movieRepository.deleteMovie(id);
-        } catch (NotFoundException notFound) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.noContent().build();
+        return movieService.delete(id);
     }
 
 
