@@ -2,7 +2,6 @@ package dev.ebyrdeu.movie_jakarta.repository;
 
 import dev.ebyrdeu.movie_jakarta.entity.Movie;
 import jakarta.persistence.TypedQuery;
-import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
