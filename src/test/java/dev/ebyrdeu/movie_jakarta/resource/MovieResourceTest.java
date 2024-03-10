@@ -88,12 +88,13 @@ class MovieResourceTest {
         assertEquals(200, response.getStatus());
     }
 
+
     @Test
     @DisplayName("Return 404 when updating entity that does not exist")
     void return404WhenUpdatingEntityThatDoesNotExist() throws URISyntaxException {
         UUID uuid = UUID.randomUUID();
         MockHttpRequest request = MockHttpRequest.put("/movies/" + uuid);
-        when(movieService.update(any(), any())).thenThrow(NotFoundException.class);
+        when(movieService.update(any(), any())).thenReturn(Response.status(Response.Status.NOT_FOUND).build());
         request.contentType(MediaType.APPLICATION_JSON);
         request.content(("{\n" +
                 "  \"title\": \" Skyfall\",\n" +
@@ -102,6 +103,7 @@ class MovieResourceTest {
                 "}").getBytes());
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
+
         assertEquals(404, response.getStatus());
     }
 
@@ -137,7 +139,7 @@ class MovieResourceTest {
     void returnStatus404WhenDeleteCannotFindId() throws URISyntaxException {
         UUID id = UUID.randomUUID();
 
-        doThrow(NotFoundException.class).when(movieService).delete(id);
+        when(movieService.delete(id)).thenReturn(Response.status(Response.Status.NOT_FOUND).build());
         MockHttpRequest request = MockHttpRequest.delete("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
