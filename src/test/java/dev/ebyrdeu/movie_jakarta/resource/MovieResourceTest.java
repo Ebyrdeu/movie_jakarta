@@ -109,10 +109,12 @@ class MovieResourceTest {
     @DisplayName("Return status 404 when id was not found")
     void returnStatus404WhenIdWasNotFound() throws URISyntaxException {
         UUID id = UUID.randomUUID();
-        when(movieService.one(id)).thenReturn(Response.noContent().build());
+
+        when(movieService.one(id)).thenReturn(Response.status(Response.Status.NOT_FOUND).build());
         MockHttpRequest request = MockHttpRequest.get("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
+
         assertEquals(404, response.getStatus());
     }
 
@@ -126,6 +128,7 @@ class MovieResourceTest {
         MockHttpRequest request = MockHttpRequest.get("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
+
         assertEquals(200, response.getStatus());
     }
 
@@ -133,10 +136,12 @@ class MovieResourceTest {
     @DisplayName("Return status 404 when delete cannot find id")
     void returnStatus404WhenDeleteCannotFindId() throws URISyntaxException {
         UUID id = UUID.randomUUID();
+
         doThrow(NotFoundException.class).when(movieService).delete(id);
         MockHttpRequest request = MockHttpRequest.delete("/movies/" + id);
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
+
         assertEquals(404, response.getStatus());
     }
 
